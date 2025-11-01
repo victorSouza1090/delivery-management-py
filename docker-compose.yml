@@ -1,0 +1,43 @@
+version: "3.9"
+
+services:
+  api:
+    build: .
+    container_name: delivery_api
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+      - rabbitmq
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://postgres:postgres@db:5432/delivery
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq/
+  
+  worker:
+    build: .
+    command: ["python", "-m", "app.worker"]
+    depends_on:
+      - db
+      - rabbitmq
+
+  publisher:
+    build: .
+    command: ["python", "-m", "app.outbox"]
+    depends_on:
+      - db
+      - rabbitmq
+
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: delivery
+    ports:
+      - "5432:5432"
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
