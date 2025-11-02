@@ -26,7 +26,7 @@ class OrderRepository(IOrderRepository):
                 await self._add_order_event(session, order.id, OrderStatus.RECEIVED)
                 
                 # Inserir no outbox
-                self.outbox_repo.create(session, order.id, "OrderCreated", {
+                await self.outbox_repo.create(session, order.id, "OrderCreated", {
                     "order_id": str(order.id),
                     "status": order.status.value
                 })
@@ -42,7 +42,9 @@ class OrderRepository(IOrderRepository):
                     return
                 order.status = new_status
                 await self._add_order_event(session, order.id, new_status)
-                self.outbox_repo.create(session, order.id, "OrderStatusUpdated", {
+                
+                # Inserir no outbox
+                await self.outbox_repo.create(session, order.id, "OrderStatusUpdated", {
                     "order_id": str(order.id),
                     "status": new_status.value
                 })
