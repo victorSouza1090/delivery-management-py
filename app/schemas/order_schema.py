@@ -11,3 +11,9 @@ class OrderResponse(BaseModel):
     address: str
     status: str
     created_at: datetime
+
+class OrderEventResponse(BaseModel):
+    id: str
+    order_id: str
+    status: str
+    timestamp: datetime
