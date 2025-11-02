@@ -7,8 +7,6 @@ from sqlalchemy.ext.asyncio import create_async_engine
 from alembic import context
 from app.core.config import settings
 from app.models.base import Base
-from app.models.order import Order
-from app.models.order_event import OrderEvent
 
 # Configuração de logging
 if context.config.config_file_name is not None:
