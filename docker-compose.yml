@@ -11,7 +11,7 @@ services:
     depends_on:
       - db
       - rabbitmq
-    command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+    command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
     volumes:
       - ./app:/app/app
 
@@ -23,7 +23,9 @@ services:
     depends_on:
       - db
       - rabbitmq
-    command: ["python", "-m", "app.worker"]
+    command: ["/bin/bash", "-c", "chmod +x /app/wait-for-it.sh && /app/wait-for-it.sh rabbitmq:5672 -- python -m app.workers.worker"]
+    volumes:
+      - ./wait-for-it.sh:/app/wait-for-it.sh
 
   publisher:
     build: .
@@ -33,7 +35,9 @@ services:
     depends_on:
       - db
       - rabbitmq
-    command: ["python", "-m", "app.outbox"]
+    command: ["/bin/bash", "-c", "chmod +x /app/wait-for-it.sh && /app/wait-for-it.sh rabbitmq:5672 -- python -m app.workers.outbox"]
+    volumes:
+      - ./wait-for-it.sh:/app/wait-for-it.sh
 
   db:
     image: postgres:16
