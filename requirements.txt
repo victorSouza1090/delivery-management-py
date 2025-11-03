@@ -10,3 +10,5 @@ asyncpg
 sqlalchemy
 pytest
 pytest-asyncio
+python-json-logger
+PyYAML

@@ -11,7 +11,13 @@ services:
     depends_on:
       - db
       - rabbitmq
-    command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+    command: [
+      "uvicorn", "app.main:app",
+      "--host", "0.0.0.0",
+      "--port", "8000",
+      "--reload",
+      "--log-config", "logging.yaml"
+    ]
     volumes:
       - ./app:/app/app
 
