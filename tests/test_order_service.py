@@ -8,6 +8,7 @@ from app.repositories.order_repository_interface import IOrderRepository
 from app.models.order import Order, OrderStatus
 from app.models.order_event import OrderEvent
 from app.schemas.order_schema import OrderCreate
+from app.core.exceptions.orders.orderNotFoundError import OrderNotFoundError
 
 @pytest.fixture
 def mock_repo():
@@ -38,7 +39,7 @@ async def test_get_order_found(mock_repo):
 async def test_get_order_not_found(mock_repo):
     mock_repo.get_order_by_id.return_value = None
     service = OrderService(order_repo=mock_repo)
-    with pytest.raises(ValueError):
+    with pytest.raises(OrderNotFoundError):
         await service.get_order(uuid4())
     mock_repo.get_order_by_id.assert_awaited_once()
 
