@@ -29,7 +29,7 @@ async def seed_orders():
                     continue
 
                 new_order = Order(
-                    id=uuid.uuid4(),
+                    id=str(uuid.uuid4()),
                     customer_name=order_data["customer_name"],
                     address=order_data["address"],
                     status=OrderStatus.RECEIVED
@@ -38,7 +38,7 @@ async def seed_orders():
                 await session.flush()  # Gera o ID do pedido
 
                 new_event = OrderEvent(
-                    id=uuid.uuid4(),
+                    id=str(uuid.uuid4()),
                     order_id=new_order.id,
                     status=OrderStatus.RECEIVED
                 )

@@ -1,7 +1,6 @@
 from sqlalchemy import Column, String, DateTime, Enum, func
-from sqlalchemy.dialects.postgresql import UUID as PG_UUID
-import enum
 import uuid
+import enum
 from app.models.base import Base
 
 class OrderStatus(str, enum.Enum):
@@ -20,7 +19,7 @@ class OrderStatus(str, enum.Enum):
 class Order(Base):
     __tablename__ = "orders"
 
-    id = Column(PG_UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     customer_name = Column(String, nullable=False)
     address = Column(String, nullable=False)
     status = Column(Enum(OrderStatus), nullable=False, default=OrderStatus.RECEIVED)

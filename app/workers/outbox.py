@@ -1,6 +1,6 @@
 import asyncio
 import logging
-from app.models.outbox_event import OutboxEvent
+from app.dto.outbox_event_dto import OutboxEventDTO
 from app.dependencies import get_event_publisher, get_outbox_event_repository
 from app.repositories.outbox_event_repository_interface import IOutboxEventRepository
 from app.workers.interfaces import IMessagePublisher
@@ -8,7 +8,7 @@ from app.workers.interfaces import IMessagePublisher
 logging.basicConfig(level=logging.INFO, format="[%(asctime)s] %(levelname)s: %(message)s")
 
 
-async def publish_event(event: OutboxEvent, publisher: IMessagePublisher):
+async def publish_event(event: OutboxEventDTO, publisher: IMessagePublisher):
     try:
         logging.info(f"Enviando evento {event.event_type} : {event.payload}")
         await publisher.publish({
