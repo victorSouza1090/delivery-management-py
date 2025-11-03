@@ -4,6 +4,9 @@ pydantic
 pydantic-settings
 python-dotenv
 aio-pika
+aiosqlite
 alembic
 asyncpg
 sqlalchemy
+pytest
+pytest-asyncio

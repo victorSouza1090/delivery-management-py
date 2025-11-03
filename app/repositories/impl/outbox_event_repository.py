@@ -10,6 +10,9 @@ from app.repositories.outbox_event_repository_interface import IOutboxEventRepos
 
 
 class OutboxEventRepository(IOutboxEventRepository):
+    def __init__(self, session_factory=AsyncSessionLocal):
+        self.session_factory = session_factory
+        
     async def create(self, session, order_id, event_type, payload):
         if not isinstance(payload, str):
             payload = json.dumps(payload)
@@ -20,18 +23,20 @@ class OutboxEventRepository(IOutboxEventRepository):
             sent=False
         )
         session.add(outbox)
+        await session.flush() 
         return OutboxEventDTO.from_model(outbox)
         
     async def get_pending_events(self) -> List[OutboxEventDTO]:
-        async with AsyncSessionLocal() as session:
+        async with self.session_factory() as session:
             result = await session.execute(
                 select(OutboxEvent).where(OutboxEvent.sent == False).order_by(OutboxEvent.created_at)
             )
             return [OutboxEventDTO.from_model(event) for event in result.scalars().all()]
 
     async def mark_event_sent(self, event_id: UUID) -> None:
-        async with AsyncSessionLocal() as session:
-            await session.execute(
-                update(OutboxEvent).where(OutboxEvent.id == str(event_id)).values(sent=True)
-            )
+        async with self.session_factory() as session:
+            async with session.begin():
+                await session.execute(
+                    update(OutboxEvent).where(OutboxEvent.id == str(event_id)).values(sent=True)
+                )
             await session.commit()
