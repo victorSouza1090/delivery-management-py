@@ -31,8 +31,11 @@ Body:
 }
 Response:
 {
-"order_id": "uuid",
-"status": "RECEIVED"
+"id": "uuid",
+"customer_name": "João Silva",
+"address": "Rua Exemplo, 123",
+"status": "RECEIVED",
+"created_at": "2025-11-03T00:32:55.534780Z"
 }
 ```
 ### Consultar status atual
@@ -40,8 +43,11 @@ Response:
 GET /orders/{order_id}
 Response:
 {
-"order_id": "uuid",
-"status": "IN_TRANSIT"
+"id": "793491aa-5958-4c3f-b51d-d8abf83eef12",
+"customer_name": "João Silva",
+"address": "Rua A, 123",
+"status": "DELIVERED",
+"created_at": "2025-11-02T01:46:47.087816Z"
 }
 ```
 ### Consultar histórico de eventos
@@ -49,9 +55,24 @@ Response:
 GET /orders/{order_id}/events
 Response:
 [
-{"status": "RECEIVED", "timestamp": "2025-11-01T20:00:00Z"},
-{"status": "IN_TRANSIT", "timestamp": "2025-11-01T20:05:00Z"},
-{"status": "DELIVERED", "timestamp": "2025-11-01T20:30:00Z"}
+    {
+        "id": "c854b8a2-fef2-4407-a7d8-3a88c71b5cc8",
+        "order_id": "58a3df14-0c77-4c55-b38e-06e10b1d5373",
+        "status": "RECEIVED",
+        "timestamp": "2025-11-03T00:19:36.502902Z"
+    },
+    {
+        "id": "d5daae51-fcd0-4137-90a9-8ca7881202d0",
+        "order_id": "58a3df14-0c77-4c55-b38e-06e10b1d5373",
+        "status": "IN_TRANSIT",
+        "timestamp": "2025-11-03T00:19:37.681178Z"
+    },
+    {
+        "id": "75a771a4-a5f3-433a-a536-6c439d79890f",
+        "order_id": "58a3df14-0c77-4c55-b38e-06e10b1d5373",
+        "status": "DELIVERED",
+        "timestamp": "2025-11-03T00:19:39.661796Z"
+    }
 ]
 ```
 ## Requisitos técnicos

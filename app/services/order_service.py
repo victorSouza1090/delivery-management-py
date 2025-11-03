@@ -1,5 +1,6 @@
 from app.schemas.order_schema import OrderCreate, OrderResponse, OrderEventResponse
 from app.repositories.order_repository_interface import IOrderRepository
+from app.core.exceptions.orders.orderNotFoundError import OrderNotFoundError
 from uuid import UUID
 
 class OrderService:
@@ -45,7 +46,7 @@ class OrderService:
         """
         order = await self.order_repo.get_order_by_id(order_id)
         if not order:
-            raise ValueError("Order not found")
+            raise OrderNotFoundError(order_id)
 
         return OrderResponse(
             id=str(order.id),
@@ -65,6 +66,9 @@ class OrderService:
         Returns:
             List[OrderEventResponse]: Lista de eventos do pedido.
         """
+        order = await self.order_repo.get_order_by_id(order_id)
+        if not order:
+            raise OrderNotFoundError(order_id)
         events = await self.order_repo.get_order_events(order_id)
         return [
             OrderEventResponse(

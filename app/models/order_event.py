@@ -4,11 +4,12 @@ import enum
 import uuid
 from app.models.base import Base
 from app.models.order import OrderStatus
+import uuid
 
 class OrderEvent(Base):
     __tablename__ = "order_events"
 
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    order_id = Column(UUID(as_uuid=True), ForeignKey("orders.id"), nullable=False)
+    id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    order_id = Column(String(36), ForeignKey("orders.id"), nullable=False)
     status = Column(Enum(OrderStatus), nullable=False)
     timestamp = Column(DateTime(timezone=True), server_default=func.now())

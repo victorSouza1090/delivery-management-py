@@ -19,13 +19,3 @@ class IOutboxEventRepository(ABC):
         pass
         """Cria um novo registro OutboxEvent usando a sessão fornecida."""
         pass
-
-    @abstractmethod    
-    async def get_pending_events(self) -> list:
-        """Retorna uma lista de eventos OutboxEvent pendentes."""
-        pass
-
-    @abstractmethod
-    async def mark_event_sent(self, event_id: Any) -> None:
-        """Marca um evento OutboxEvent como enviado."""
-        pass

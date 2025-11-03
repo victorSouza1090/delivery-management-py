@@ -4,6 +4,7 @@ from pydantic import Field
 
 class Settings(BaseSettings):
     app_name: str = Field(default="Delivery Service", alias="APP_NAME")
+    app_version: str = Field(default="1.0.0", alias="APP_VERSION")
     env: str = Field(default="development", alias="ENV")
     app_port: int = Field(default=8000, alias="APP_PORT")
 
