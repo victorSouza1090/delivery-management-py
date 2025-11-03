@@ -8,7 +8,7 @@ from app.repositories.outbox_event_repository_interface import IOutboxEventRepos
 
 
 class OutboxEventRepository(IOutboxEventRepository):
-    def create(self, session, order_id, event_type, payload):
+    async def create(self, session, order_id, event_type, payload):
         outbox = OutboxEvent(
             order_id=order_id,
             event_type=event_type,
