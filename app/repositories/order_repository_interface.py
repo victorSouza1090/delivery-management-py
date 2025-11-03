@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
 from uuid import UUID
-from typing import List
 from app.models.order import Order
 from app.models.order_event import OrderEvent
 
@@ -50,5 +49,19 @@ class IOrderRepository(ABC):
 
         Returns:
             list[OrderEvent]: Lista de eventos do pedido.
+        """
+        pass
+    
+    @abstractmethod
+    async def update_order_status(self, order_id: UUID, new_status: 'OrderStatus') -> None:
+        """
+        Atualiza o status de um pedido e registra o evento correspondente.
+
+        Args:
+            order_id (UUID): ID do pedido a ser atualizado.
+            new_status (OrderStatus): Novo status a ser definido.
+
+        Returns:
+            None
         """
         pass

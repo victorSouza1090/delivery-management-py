@@ -7,7 +7,7 @@ from app.schemas.order_schema import OrderResponse, OrderEventResponse, OrderCre
 router = APIRouter()
 
 # Injeção de Dependencia
-async def get_order_service(
+def get_order_service(
     repo = Depends(get_order_repository)
 ):
     return OrderService(order_repo=repo)

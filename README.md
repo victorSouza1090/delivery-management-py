@@ -70,3 +70,26 @@ Response:
 1. Crie o `.env` com as variáveis de ambiente 
 2. Suba os containers: docker-compose up --build
 3. Acesse a API: [http://localhost:8000/docs](http://localhost:8000/docs)
+
+## Arquitetura de pastas
+```
+delivery-management-py/
+├── app/
+│   ├── main.py               # Ponto de entrada da API FastAPI
+│   ├── core/                 # Configurações globais do projeto (ex: config.py)
+│   ├── workers/              # Workers e publishers para mensageria (RabbitMQ, etc)
+│   ├── db/
+│   │   ├── database.py       # Configuração do SQLAlchemy Async
+│   │   └── migrations/       # Scripts de migração do banco
+│   ├── models/               # Definição das entidades/tabelas ORM
+│   ├── schemas/              # Schemas Pydantic para validação de dados
+│   ├── repositories/         # Interfaces e implementações de acesso a dados
+│   │   ├── impl/             # Implementações concretas dos repositórios
+│   ├── services/             # Regras de negócio e orquestração
+│   ├── api/
+│   │   └── routes/           # Rotas/endpoints da API
+│   └── dependencies.py       # Injeção de dependências para FastAPI/Workers
+├── .env                      # Variáveis de ambiente do projeto
+├── Dockerfile                # Imagem do serviço FastAPI
+├── docker-compose.yml        # Orquestração dos containers (API, DB, RabbitMQ)
+```
