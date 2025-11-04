@@ -50,3 +50,38 @@ async def test_get_order_events(repo):
     assert events[0].status == OrderStatus.RECEIVED
     assert events[1].status == OrderStatus.IN_TRANSIT
     assert events[2].status == OrderStatus.DELIVERED
+    
+@pytest.mark.asyncio
+async def test_update_order_status_no_order(repo):
+    fake_id = uuid.uuid4()
+    found = await repo.update_order_status(fake_id, OrderStatus.IN_TRANSIT)
+    assert found is None
+
+@pytest.mark.asyncio
+async def test_update_order_status_same_status(repo):
+    order = await repo.create_order("Ana", "Rua W")
+    await repo.update_order_status(uuid.UUID(order.id), OrderStatus.RECEIVED)
+    updated = await repo.get_order_by_id(uuid.UUID(order.id))
+    assert updated.status == OrderStatus.RECEIVED
+
+@pytest.mark.asyncio
+async def test_update_order_status_event_exists(repo):
+    order = await repo.create_order("Beto", "Rua V")
+    order_id = uuid.UUID(order.id)
+    await repo.update_order_status(order_id, OrderStatus.IN_TRANSIT)
+    # Tenta atualizar para IN_TRANSIT novamente (evento já existe)
+    await repo.update_order_status(order_id, OrderStatus.IN_TRANSIT)
+    events = await repo.get_order_events(order_id)
+    assert len(events) == 2  # Deve ter apenas 2 eventos RECEIVED e IN_TRANSIT
+
+@pytest.mark.asyncio
+async def test_get_order_by_id_not_found(repo):
+    fake_id = uuid.uuid4()
+    found = await repo.get_order_by_id(fake_id)
+    assert found is None
+
+@pytest.mark.asyncio
+async def test_get_order_events_not_found(repo):
+    fake_id = uuid.uuid4()
+    events = await repo.get_order_events(fake_id)
+    assert events == []

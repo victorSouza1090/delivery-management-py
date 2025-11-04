@@ -34,7 +34,7 @@ jobs:
       - name: Relatório de cobertura
         run: |
           pip install coverage
-          coverage run -m pytest
+          coverage run --omit='tests/*,app/repositories/*_interface.py' -m pytest
           coverage report
           coverage xml
         continue-on-error: true

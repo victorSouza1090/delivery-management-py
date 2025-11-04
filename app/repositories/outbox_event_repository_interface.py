@@ -17,5 +17,3 @@ class IOutboxEventRepository(ABC):
     async def mark_event_sent(self, event_id: Any) -> None:
         """Marca um evento OutboxEvent como enviado."""
         pass
-        """Cria um novo registro OutboxEvent usando a sessão fornecida."""
-        pass
