@@ -29,11 +29,13 @@ jobs:
 
       - name: Rodar testes
         run: |
+          export PYTHONPATH=$(pwd)
           pytest --maxfail=1 --disable-warnings -v
 
       - name: Relatório de cobertura
         run: |
           pip install coverage
+          export PYTHONPATH=$(pwd)
           coverage run --omit='tests/*,app/repositories/*_interface.py' -m pytest
           coverage report
           coverage xml
