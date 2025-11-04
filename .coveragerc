@@ -1,0 +1,17 @@
+[run]
+source = app
+omit =
+    tests/*
+    app/main.py
+    app/dependencies.py
+    app/db/database.py
+    app/models/base.py
+    app/repositories/*_interface.py
+
+[report]
+show_missing = True
+skip_covered = False
+precision = 2
+
+[html]
+directory = htmlcov

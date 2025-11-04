@@ -8,7 +8,10 @@ aiosqlite
 alembic
 asyncpg
 sqlalchemy
-pytest
-pytest-asyncio
 python-json-logger
 PyYAML
+
+# Testes e cobertura
+pytest
+pytest-asyncio
+pytest-cov

@@ -42,22 +42,14 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Rodar testes
+      - name: Rodar testes com cobertura
         run: |
           export PYTHONPATH=$(pwd)
-          pytest --maxfail=1 --disable-warnings -v
+          pytest -v --maxfail=1 --disable-warnings
 
-      - name: Relatório de cobertura
-        run: |
-          pip install coverage
-          export PYTHONPATH=$(pwd)
-          coverage run --omit='tests/*,app/repositories/*_interface.py' -m pytest
-          coverage report
-          coverage xml
-        continue-on-error: true
-
-      - name: Publicar cobertura no GitHub
+      - name: Publicar relatório de cobertura
         uses: actions/upload-artifact@v4
         with:
           name: coverage-report
-          path: coverage.xml
+          path: |
+            coverage.xml

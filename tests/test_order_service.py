@@ -42,6 +42,14 @@ async def test_get_order_not_found(mock_repo):
     with pytest.raises(OrderNotFoundError):
         await service.get_order(uuid4())
     mock_repo.get_order_by_id.assert_awaited_once()
+    
+@pytest.mark.asyncio
+async def test_get_order_events_order_not_found(mock_repo):
+    mock_repo.get_order_by_id.return_value = None
+    service = OrderService(order_repo=mock_repo)
+    with pytest.raises(OrderNotFoundError):
+        await service.get_order_events(uuid4())
+    mock_repo.get_order_by_id.assert_awaited_once()
 
 @pytest.mark.asyncio
 async def test_get_order_events(mock_repo):
