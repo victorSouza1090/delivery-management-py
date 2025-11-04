@@ -16,40 +16,32 @@ jobs:
     env:
       DB_USER: test
       DB_PASSWORD: test
-      DB_HOST: localhost
+      DB_HOST: db
       DB_PORT: 5432
       DB_NAME: testdb
-      DATABASE_URL: "sqlite+aiosqlite:///:memory:"
+      DATABASE_URL: "postgresql+asyncpg://test:test@db:5432/testdb"
       RABBITMQ_USER: test
       RABBITMQ_PASSWORD: test
-      RABBITMQ_HOST: localhost
+      RABBITMQ_HOST: rabbitmq
       RABBITMQ_PORT: 5672
       RABBITMQ_VHOST: /
-      RABBITMQ_URL: amqp://test:test@localhost:5672/
+      RABBITMQ_URL: amqp://test:test@rabbitmq:5672/
       LOG_LEVEL: INFO
       ENABLE_STRUCTURED_LOGS: true
     steps:
       - name: Checkout código
         uses: actions/checkout@v3
 
-      - name: Configurar Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.11'
-
-      - name: Instalar dependências
+      - name: Rodar testes no container tests
         run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          docker compose -f docker-compose-test.yml up --build tests
 
-      - name: Rodar testes com cobertura
+      - name: Copiar relatório de coverage
         run: |
-          export PYTHONPATH=$(pwd)
-          pytest -v --maxfail=1 --disable-warnings
+          docker cp $(docker compose -f docker-compose-test.yml ps -q tests):/app/coverage.xml ./coverage.xml
 
       - name: Publicar relatório de cobertura
         uses: actions/upload-artifact@v4
         with:
           name: coverage-report
-          path: |
-            coverage.xml
+          path: coverage.xml

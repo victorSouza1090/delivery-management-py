@@ -1,0 +1,88 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: delivery_test
+      POSTGRES_USER: testuser
+      POSTGRES_PASSWORD: testpass
+    ports:
+      - "5433:5432"
+    tmpfs:
+      - /var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U testuser -d delivery_test"]
+      interval: 3s
+      retries: 5
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "check_running"]
+      interval: 5s
+      retries: 5
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file: .env.test
+    depends_on:
+      db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    command: >
+      bash -c "chmod +x /app/wait-for-it.sh &&
+               /app/wait-for-it.sh db:5432 --
+               alembic upgrade head &&
+               uvicorn app.main:app --host 0.0.0.0 --port 8000"
+    ports:
+      - "8001:8000"
+
+  worker:
+    build: .
+    env_file: .env.test
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      db:
+        condition: service_healthy
+    command: >
+      bash -c "chmod +x /app/wait-for-it.sh &&
+               /app/wait-for-it.sh rabbitmq:5672 --
+               python -m app.workers.worker"
+
+  outbox_worker:
+    build: .
+    env_file: .env.test
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      db:
+        condition: service_healthy
+    command: >
+      bash -c "chmod +x /app/wait-for-it.sh &&
+               /app/wait-for-it.sh rabbitmq:5672 --
+               python -m app.workers.outbox"
+
+  tests:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file: .env.test
+    depends_on:
+      - db
+      - rabbitmq
+      - app
+    command: >
+      bash -c "chmod +x /app/wait-for-it.sh &&
+               /app/wait-for-it.sh app:8000 --
+               pytest --maxfail=1 --disable-warnings -v"
