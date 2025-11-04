@@ -57,3 +57,18 @@ async def test_mark_event_sent(session_factory, repo):
     await repo.mark_event_sent(uuid.UUID(dto.id))
     events = await repo.get_pending_events()
     assert all(e.sent for e in events) or len(events) == 0
+
+@pytest.mark.asyncio
+async def test_create_with_string_payload(session_factory, repo):
+    async with session_factory() as session:
+        order_id = str(uuid.uuid4())
+        event_type = "OrderCreated"
+        payload = '{"order_id": "%s", "status": "RECEIVED"}' % order_id
+        dto = await repo.create(session, order_id, event_type, payload)
+        assert isinstance(dto, OutboxEventDTO)
+        assert dto.payload["order_id"] == order_id
+
+@pytest.mark.asyncio
+async def test_get_pending_events_empty(repo):
+    events = await repo.get_pending_events()
+    assert events == []
