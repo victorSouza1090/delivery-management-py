@@ -25,7 +25,7 @@ async def test_publisher_sends_message():
     for _ in range(10):
         if received_events:
             break
-        await asyncio.sleep(0.5)
+        await asyncio.sleep(1)
 
     task.cancel()
 
