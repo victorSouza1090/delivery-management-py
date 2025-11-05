@@ -32,6 +32,10 @@ async def test_create_and_get_order(repo):
     assert found.id == order.id
     assert found.customer_name == "João"
 
+    events = await repo.get_order_events(uuid.UUID(order.id))
+    assert len(events) == 1
+    assert events[0].status == OrderStatus.RECEIVED
+
 @pytest.mark.asyncio
 async def test_update_order_status(repo):
     order = await repo.create_order("Maria", "Rua Y")
@@ -70,7 +74,7 @@ async def test_update_order_status_event_exists(repo):
     order_id = uuid.UUID(order.id)
     await repo.update_order_status(order_id, OrderStatus.IN_TRANSIT)
     # Tenta atualizar para IN_TRANSIT novamente (evento já existe)
-    await repo.update_order_status(order_id, OrderStatus.IN_TRANSIT)
+    await repo.update_order_status(order_id, OrderStatus.RECEIVED)
     events = await repo.get_order_events(order_id)
     assert len(events) == 2  # Deve ter apenas 2 eventos RECEIVED e IN_TRANSIT
 
