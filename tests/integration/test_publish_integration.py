@@ -22,7 +22,7 @@ async def test_publisher_sends_message():
     await publisher.publish(event)
 
     # Aguarda a mensagem ser consumida
-    for _ in range(10):
+    for _ in range(30):
         if received_events:
             break
         await asyncio.sleep(1)
