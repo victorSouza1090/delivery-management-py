@@ -20,7 +20,7 @@ Sistema de gerenciamento de entregas orientado a eventos, desenvolvido em FastAP
 - **Outbox Pattern**: garante consistência entre banco e fila
 - **Logs estruturados**: rastreamento de eventos e falhas
 - **Observabilidade(Prometheus+Grafana)**: exposição de metricas
-**Testes unitários e de integração**: arquitetura de testes baseada em `pytest`, com separação entre testes unitários (regras de negócio, validação) e testes de integração (API, workers, mensageria, persistência), todos orquestrados via Docker Compose para garantir isolamento e confiabilidade
+- **Testes unitários e de integração**: arquitetura de testes baseada em `pytest`, com separação entre testes unitários (regras de negócio, validação) e testes de integração (API, workers, mensageria, persistência), todos orquestrados via Docker Compose para garantir isolamento e confiabilidade
 
 
 ## Justificativa das Tecnologias
