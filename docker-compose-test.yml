@@ -47,32 +47,6 @@ services:
     ports:
       - "8001:8000"
 
-  worker:
-    build: .
-    env_file: .env.test
-    depends_on:
-      rabbitmq:
-        condition: service_healthy
-      db:
-        condition: service_healthy
-    command: >
-      bash -c "chmod +x /app/wait-for-it.sh &&
-               /app/wait-for-it.sh rabbitmq:5672 --
-               python -m app.workers.worker"
-
-  outbox_worker:
-    build: .
-    env_file: .env.test
-    depends_on:
-      rabbitmq:
-        condition: service_healthy
-      db:
-        condition: service_healthy
-    command: >
-      bash -c "chmod +x /app/wait-for-it.sh &&
-               /app/wait-for-it.sh rabbitmq:5672 --
-               python -m app.workers.outbox"
-
   tests:
     build:
       context: .
