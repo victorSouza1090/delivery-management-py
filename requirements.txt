@@ -16,3 +16,7 @@ pytest
 pytest-asyncio
 pytest-cov
 httpx
+
+#observabilidade
+prometheus-client
+prometheus-fastapi-instrumentator

@@ -1,0 +1,28 @@
+global:
+  scrape_interval: 15s
+
+external_labels:
+  cluster: local-dev
+  env: dev
+
+scrape_configs:
+  - job_name: "delivery_api"
+    static_configs:
+      - targets: ["api:8000"]
+
+scrape_configs:
+  - job_name: "delivery_api"
+    static_configs:
+      - targets: ["api:8000"]
+
+remote_write:
+  - url: https://prometheus-prod-40-prod-sa-east-1.grafana.net/api/prom/push
+    basic_auth:
+      username: "${PROMETHEUS_USER}"
+      password: "${PROMETHEUS_PASSWORD}"
+    queue_config:
+      max_samples_per_send: 2500
+      capacity: 20000
+      max_shards: 1
+      min_shards: 1
+      
