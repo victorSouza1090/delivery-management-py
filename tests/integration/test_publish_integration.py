@@ -18,7 +18,7 @@ async def test_publisher_sends_message():
 
     worker = get_message_worker()
     task = asyncio.create_task(worker.start(test_handler))
-
+    await asyncio.sleep(5)  # Aguarda o worker iniciar
     await publisher.publish(event)
     
     async def wait_for_message(received_events):
