@@ -24,7 +24,6 @@ class RabbitMQWorker(IMessageWorker):
         return exchange, queue
 
     async def start(self, handler):
-        import logging
         connection = await connect_robust(settings.rabbitmq_url)
         logger.info("[RabbitMQWorker] Conectado ao RabbitMQ")
         channel = await connection.channel()
@@ -32,6 +31,7 @@ class RabbitMQWorker(IMessageWorker):
 
         dlx, _ = await self.setup_dead_letter(channel)
         _, queue = await self.setup_main_queue(channel, dlx.name)
+        logger.info(f"[RabbitMQWorker] Filas e exchanges configuradas. Queue: {queue.name}")
 
         async def on_message(message):
             try:

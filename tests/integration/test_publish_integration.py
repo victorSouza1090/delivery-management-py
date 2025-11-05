@@ -20,12 +20,14 @@ async def test_publisher_sends_message():
     task = asyncio.create_task(worker.start(test_handler))
 
     await publisher.publish(event)
+    
+    async def wait_for_message(received_events):
+        while not received_events:
+            await asyncio.sleep(0.5)
+            
+    await asyncio.wait_for(wait_for_message(received_events), timeout=30)
 
-    # Aguarda a mensagem ser consumida
-    for _ in range(30):
-        if received_events:
-            break
-        await asyncio.sleep(1)
+    
 
     task.cancel()
 
